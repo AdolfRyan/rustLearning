@@ -74,7 +74,7 @@ pub mod basic {
             let condition = true;
             let x = if condition { 5 } else { 6 };
             println!("x = {}", x);
-            //loop 
+            //loop
             let mut counter = 0;
             counter = loop {
                 println!("counter = {}", counter);
@@ -182,5 +182,174 @@ pub mod basic {
         }
     }
 
+    pub mod struct_mod {
+        #[derive(Debug)]
+        struct User {
+            name: String,
+            acount: String,
+            nonce: u32,
+            active: bool,
+        }
 
+        struct Point(i32, i32);
+
+        pub fn run() {
+            let mut user = User {
+                name: String::from("zhangsan"),
+                acount: String::from("11111"),
+                nonce: 10000,
+                active: true,
+            };
+            let user1 = User { ..user };
+            user.acount = String::from("22222");
+            // println!(
+            //     "user = {} {} {} {}",
+            //     user.name, user.acount, user.nonce, user.active
+            // );
+            println!("user = {:#?}", user1);
+
+            let point = Point(1, 2);
+            println!("point = {} {}", point.0, point.1);
+        }
+    }
+
+    pub mod funct {
+        #[derive(Debug)]
+        struct Dog {
+            name: String,
+            weight: f32,
+            height: f32,
+        }
+
+        impl Dog {
+            fn get_name(&self) -> &str {
+                &self.name
+            }
+
+            fn get_weight(&self) -> f32 {
+                self.weight
+            }
+
+            fn get_height(&self) -> f32 {
+                self.height
+            }
+        }
+        pub fn run() {
+            let dog = Dog {
+                name: String::from("dog"),
+                weight: 10.0,
+                height: 20.0,
+            };
+
+            println!("dog = {:#?}", dog);
+            println!(
+                "name = {} {} {}",
+                dog.get_name(),
+                dog.get_weight(),
+                dog.get_height()
+            );
+        }
+    }
+
+    pub mod enumeration {
+        enum Message {
+            Quit,
+            Move(i32, i32),
+            Write(String),
+            Change(i32, i32, i32),
+        }
+
+        impl Message {
+            fn print(&self) {
+                match *self {
+                    Message::Quit => println!("Quit"),
+                    Message::Move(x, y) => println!("Move x = {}, y = {}", x, y),
+                    Message::Change(x, y, z) => println!("Change x = {}, y = {}, z = {}", x, y, z),
+                    _ => println!("Write"),
+                }
+            }
+        }
+
+        pub fn run() {
+            let m = Message::Move(1, 2);
+            m.print();
+            let q = Message::Quit;
+            q.print();
+            let w = Message::Write(String::from("hello"));
+            w.print();
+            let c = Message::Change(1, 2, 3);
+            c.print();
+        }
+    }
+
+    pub mod option {
+        fn plus_one(x: Option<i32>) -> Option<i32> {
+            match x {
+                None => None,
+                Some(i) => Some(i + 1),
+            }
+        }
+        pub fn run() {
+            let x: i32 = 5;
+            let y: Option<i32> = Some(5);
+            let i = match y{
+                Some(i) => {
+                    println!("i = {}", i);
+                    i
+                }
+                None => {
+                    println!("None");
+                    0
+                },
+            };
+            println!("y + x = {}", x + i);
+
+            let five = Some(5);
+            if let Some(result) = plus_one(five) {
+                println!("result = {}", result);
+            } else {
+                println!("None");
+            }
+            
+        }
+    }
+
+    pub mod vector {
+        enum ConText {
+            Text(String),
+            Float(f32),
+            Int(i32),
+        }
+        pub fn run() {
+            let c: Vec<ConText> = vec![ConText::Text(String::from("hello")), ConText::Float(1.0), ConText::Int(1)];
+            for i in &c {
+                match i {
+                    ConText::Text(s) => println!("Text = {}", s),
+                    ConText::Float(f) => println!("Float = {}", f),
+                    ConText::Int(i) => println!("Int = {}", i),
+                }
+            }
+            let mut v: Vec<i32> = vec![1, 2, 3, 4, 5];
+            v.push(6);
+
+            let first = &v[0];
+            let second = v.get(1);
+            match second {
+                Some(i) => println!("second = {}", i),
+                None => println!("None"),
+            }
+            println!("first = {}", *first);
+            for i in &v {
+                println!("{}", i);
+            }
+
+            for i in &mut v {
+                *i += 50;
+            }
+
+            for i in v.iter() {
+                println!("{}", i);
+            }
+        }
+    }
 }
