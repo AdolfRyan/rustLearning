@@ -93,12 +93,94 @@ pub mod basic {
         }
     }
 
-    pub mod ownership {
-        pub fn run(){
+    pub mod owner_ship {
+        fn takes_ownership(s: String) {
+            println!("s = {}", s);
+        }
 
+        fn makes_copy(i: i32) {
+            println!("i = {}", i);
+        }
+
+        pub fn run() {
+            //堆 和 栈 编译时数据的类型大小是固定的，就是分配在栈上
+            {
+                let x = 5;
+                let y = x;
+                println!("x = {}, y = {}", x, y);
+            }
+            //println!("y = {}", y);
+            let s1 = String::from("hello");
+            println!("s1 = {}", s1); //String 类型离开作用域会调用drop方法释放内存
+            let s2 = s1;
+            // println!("s1 = {}", s1); //s1已经被移动到s2
+            println!("s2 = {}", s2);
+
+            let i1 = 5;
+            makes_copy(i1);
+            println!("i1 = {}", i1);
+            let s = String::from("hello");
+            takes_ownership(s);
+            // println!("s = {}", s); //s已经被移动到takes_ownership
+        }
+    }
+
+    pub mod reference {
+        fn gives_ownership() -> String {
+            let s = String::from("hello");
+            s
+        }
+
+        fn takes_and_gives_back(s: String) -> String {
+            s
+        }
+
+        fn calculate_length(s: &String) -> usize {
+            s.len()
+        }
+
+        fn modify_s(s: &mut String) {
+            s.push_str(" world");
+        }
+
+        //引用不拥有这个值，s离开作用域被回收，返回的引用指向的是一个无效的值
+        // fn dangle()->&String{
+        //     let s = String::from("hello");
+        //     &s
+        // }
+
+        pub fn run() {
+            let s1 = gives_ownership();
+            println!("s1 = {}", s1);
+            let s2 = String::from("hello");
+            let s3 = takes_and_gives_back(s2);
+            // println!("s2 = {}", s2);//s2已经被移动到takes_and_gives_back
+            println!("s3 = {}", s3);
+            let s4 = String::from("hello");
+            let len = calculate_length(&s4);
+            println!("s4 = {}, len = {}", s4, len);
+
+            let mut s5 = String::from("hello");
+            let ms = &mut s5;
+            modify_s(ms);
+            // println!("s5 = {}", s5);
+            println!("ms = {}", ms);
+        }
+    }
+
+    pub mod slice {
+        //slice就是String中一部分值的引用
+        pub fn run() {
+            let s = String::from("hello world");
+            let sl = &s[0..5]; //等价于&s[..5] = &s[0..=4]
+            println!("sl = {}", sl);
+            let sl = &s[6..11]; //等价于&s[6..]
+            println!("sl = {}", sl);
+            let a = [1, 2, 3, 4, 5];
+            let sl = &a[1..3];
+            println!("sl = {:?}", sl);
         }
     }
 
 
-    
 }

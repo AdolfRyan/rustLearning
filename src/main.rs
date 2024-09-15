@@ -1,5 +1,5 @@
 use world_hello::basic;
 
 fn main() {
-    basic::control_flow::run();
+    basic::slice::run();
 }
