@@ -292,7 +292,7 @@ pub mod basic {
         pub fn run() {
             let x: i32 = 5;
             let y: Option<i32> = Some(5);
-            let i = match y{
+            let i = match y {
                 Some(i) => {
                     println!("i = {}", i);
                     i
@@ -300,7 +300,7 @@ pub mod basic {
                 None => {
                     println!("None");
                     0
-                },
+                }
             };
             println!("y + x = {}", x + i);
 
@@ -310,7 +310,6 @@ pub mod basic {
             } else {
                 println!("None");
             }
-            
         }
     }
 
@@ -321,7 +320,11 @@ pub mod basic {
             Int(i32),
         }
         pub fn run() {
-            let c: Vec<ConText> = vec![ConText::Text(String::from("hello")), ConText::Float(1.0), ConText::Int(1)];
+            let c: Vec<ConText> = vec![
+                ConText::Text(String::from("hello")),
+                ConText::Float(1.0),
+                ConText::Int(1),
+            ];
             for i in &c {
                 match i {
                     ConText::Text(s) => println!("Text = {}", s),
@@ -351,5 +354,116 @@ pub mod basic {
                 println!("{}", i);
             }
         }
+    }
+
+    pub mod string {
+        pub fn run() {
+            let s = String::from("hello");
+            let mut s2 = String::from("world");
+            s2.push_str(" world");
+            let s3 = s + &s2;
+            println!("s3 = {}", s3);
+
+            let s1 = String::from("tic");
+            let s2 = String::from("tac");
+            let s3 = String::from("toe");
+            let s = format!("{}-{}-{}", s1, s2, s3);
+            println!("s = {}", s);
+
+            let hello = "你好";
+            println!("你好 length = {}", hello.len());
+            for c in hello.chars() {
+                println!("{}", c);
+            }
+            for c in hello.bytes() {
+                println!("{}", c);
+            }
+        }
+    }
+
+    pub mod hashmap {
+        use std::{collections::HashMap, hash::Hash};
+        pub fn run() {
+            let mut map: HashMap<String, i32> = HashMap::new();
+            map.insert(String::from("Blue"), 1);
+            map.insert(String::from("Yellow"), 2);
+
+            let keys = vec![String::from("Blueeee"), String::from("Yellowwww")];
+            let values = vec![1, 2];
+            let scroes: HashMap<_, _> = keys.iter().zip(values.iter()).collect();
+
+            if let Some(score) = scroes.get(&String::from("Blueeee")) {
+                println!("score = {}", score);
+            } else {
+                println!("None");
+            }
+
+            for (key, value) in &scroes {
+                println!("{}: {}", key, value);
+            }
+
+            let mut ss = HashMap::new();
+            ss.insert(String::from("Blue"), 10);
+            ss.entry(String::from("Yellow")).or_insert(50);
+            ss.entry(String::from("Blue")).or_insert(50);
+            println!("{:?}", ss);
+
+            let text = "hello world wonderful world";
+            let mut map = HashMap::new();
+            for word in text.split_whitespace() {
+                let count = map.entry(word).or_insert(0);
+                *count += 1;
+            }
+        }
+    }
+
+    pub mod error_mod {
+        //示例 代码原型测试用panic!\unwrap!\expect!
+        //实际项目中使用Result<T,E>类型
+        use std::fs::File;
+        use std::io;
+        use std::io::Read;
+
+        // fn read_username_from_file() -> Result<String, io::Error> {
+        //     let f = File::open("hello.txt");
+        //     let mut f = match f {
+        //         Ok(file) => file,
+        //         Err(error) => return Err(error),
+        //     };
+
+        //     let mut s = String::new();
+        //     match f.read_to_string(&mut s) {
+        //         Ok(_) => Ok(s),
+        //         Err(error) => Err(error),
+        //     }
+        // }
+
+        // fn read_username_from_file() -> Result<String, io::Error> {
+        //     let mut f = File::open("hello.txt")?;
+
+        //     let mut s = String::new();
+        //     f.read_to_string(&mut s)?;
+        //     Ok(s)
+        // }
+
+        fn read_username_from_file() -> Result<String, io::Error> {
+            let mut s = String::new();
+            File::open("hello.txt")?.read_to_string(&mut s)?;
+            Ok(s)
+        }
+
+        pub fn run() {
+            // let f = File::open("hello.txt").unwrap();
+            // let f = File::open("hello.txt").expect("Failed to open hello.txt");
+            let r = read_username_from_file();
+            match r {
+                Ok(s) => println!("s = {}", s),
+                Err(e) => println!("err = {:?}", e),
+            }
+        }
+    }
+
+    pub mod test_mod {
+        
     }
 }
