@@ -71,79 +71,333 @@ pub mod template {
 }
 
 pub mod trait_mod {
-    pub trait GetInformation {
-        fn get_name(&self) -> &str;
-        fn get_age(&self) -> u8;
-    }
+    pub mod lecture_2 {
 
-    trait SchoolName {
-        fn get_school_name(&self) -> String {
-            String::from("School")
+        pub trait GetInformation {
+            fn get_name(&self) -> &str;
+            fn get_age(&self) -> u8;
+        }
+
+        trait SchoolName {
+            fn get_school_name(&self) -> String {
+                String::from("School")
+            }
+        }
+
+        pub struct Student {
+            name: String,
+            age: u8,
+        }
+
+        impl SchoolName for Student {}
+
+        pub struct Teacher {
+            name: String,
+            age: u8,
+            subject: String,
+        }
+
+        impl SchoolName for Teacher {
+            fn get_school_name(&self) -> String {
+                format!("School of {}", self.subject)
+            }
+        }
+
+        impl GetInformation for Student {
+            fn get_name(&self) -> &str {
+                &self.name
+            }
+            fn get_age(&self) -> u8 {
+                self.age
+            }
+        }
+
+        impl GetInformation for Teacher {
+            fn get_name(&self) -> &str {
+                &self.name
+            }
+            fn get_age(&self) -> u8 {
+                self.age
+            }
+        }
+
+        fn print_information<T: GetInformation>(item: T) {
+            println!("Name: {}", item.get_name());
+            println!("Age: {}", item.get_age());
+        }
+
+        pub fn run() {
+            let student = Student {
+                name: String::from("Alice"),
+                age: 20,
+            };
+            let teacher = Teacher {
+                name: String::from("Bob"),
+                age: 30,
+                subject: String::from("Math"),
+            };
+            println!("Student name: {}", student.get_name());
+            println!("Student age: {}", student.get_age());
+            println!("Teacher name: {}", teacher.get_name());
+            println!("Teacher age: {}", teacher.get_age());
+
+            let s = student.get_school_name();
+            let t = teacher.get_school_name();
+            println!("Student school name: {}", s);
+            println!("Teacher school name: {}", t);
+
+            print_information(student);
         }
     }
 
-    pub struct Student {
-        name: String,
-        age: u8,
+    pub mod lecture_3 {
+
+        trait getName {
+            fn get_name(&self) -> &String;
+        }
+
+        trait getAge {
+            fn get_age(&self) -> u8;
+        }
+
+        fn print_information<T: getName + getAge>(item: T) {
+            // where T: getName + getAge
+            println!("Name: {}", item.get_name());
+            println!("Age: {}", item.get_age());
+        }
+
+        #[derive(Debug)]
+        pub struct Student {
+            name: String,
+            age: u8,
+        }
+
+        impl getName for Student {
+            fn get_name(&self) -> &String {
+                &self.name
+            }
+        }
+
+        impl getAge for Student {
+            fn get_age(&self) -> u8 {
+                self.age
+            }
+        }
+
+        fn produce_item_with_age() -> impl getAge {
+            Student {
+                name: String::from("Alice"),
+                age: 20,
+            }
+        }
+
+        pub fn run() {
+            let student = Student {
+                name: String::from("Alice"),
+                age: 20,
+            };
+            print_information(student);
+
+            let s = produce_item_with_age();
+        }
     }
 
-    impl SchoolName for Student {}
+    pub mod lecture_6 {
+        trait getName {
+            fn get_name(&self) -> &String;
+        }
+        trait getAge {
+            fn get_age(&self) -> u8;
+        }
+
+        struct peopleMatchInformation<T, U> {
+            master: T,
+            student: U,
+        }
+
+        impl<T: getName + getAge, U: getName + getAge> peopleMatchInformation<T, U> {
+            fn print_all_information(&self) {
+                println!("Master name: {}", self.master.get_name());
+                println!("Master age: {}", self.master.get_age());
+                println!("Student name: {}", self.student.get_name());
+                println!("Student age: {}", self.student.get_age());
+            }
+        }
+        
+        struct Teacher {
+            name: String,
+            age: u8,
+        }
+
+        impl getName for Teacher {
+            fn get_name(&self) -> &String {
+                &self.name
+            }
+        }
+
+        impl getAge for Teacher {
+            fn get_age(&self) -> u8 {
+                self.age
+            }
+        }
+
+        struct Student {
+            name: String,
+            age: u8,
+        }
+
+        impl getName for Student {
+            fn get_name(&self) -> &String {
+                &self.name
+            }
+        }
+
+        impl getAge for Student {
+            fn get_age(&self) -> u8 {
+                self.age
+            }
+        }
+
+        pub fn run() {
+            let teacher = Teacher {
+                name: String::from("Bob"),
+                age: 30,
+            };
+            let student = Student {
+                name: String::from("Alice"),
+                age: 20,
+            };
+            let people = peopleMatchInformation {
+                master: teacher,
+                student,
+            };
+            people.print_all_information();
+        }
+    }
+
+    pub mod lecture_7 {
+        trait getName {
+            fn get_name(&self) -> &String;
+        }
+        trait printName {
+            fn print_name(&self);
+        }
+
+        impl<T: getName> printName for T {
+            fn print_name(&self) {
+                println!("Name: {}", self.get_name());
+            }
+        }
+
+        struct Student {
+            name: String,
+            age: u8,
+        }
+
+        impl getName for Student {
+            fn get_name(&self) -> &String {
+                &self.name
+            }
+        }
+        pub fn run() {
+            let s = Student {
+                name: String::from("Alice"),
+                age: 20,
+            };
+            s.print_name();
+        }
+    }
+
+}
+
+pub mod life_time {
+    pub mod lecture_1 {
+        pub fn run() {
+            // let r;
+            // {
+            //     let x = 5;
+            //     r = &x;
+            // }
+            // println!("r: {}", r);
+        }
+    }
+
+    pub mod lecture_2 {
+        fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+            if x.len() > y.len() {
+                x
+            } else {
+                y
+            }
+        }
+
+        fn get_str<'a>(x: &'a str, y: &str) -> &'a str {
+            x
+        }
+
+        // fn a_str<'a>(x: &str, y: &str) -> &'a str {
+        //     let r = String::from("ssss");
+        //     r.as_str()
+        // }
+
+        pub fn run() {
+            let s1 = String::from("long string is long");
+            let s2 = String::from("xyz");
+            let result = longest(s1.as_str(), s2.as_str());
+            println!("The longest string is {}", result);
+        }
+    }
+
+    pub mod lecture_3 {
+        struct A<'a> {
+            name: &'a str,
+        }
+
+        pub fn run() {
+            let a = A { name: "Alice" };
+            println!("Name: {}", a.name);
+        }
+    }
+
+    pub mod lecture_5 {
+        struct stuA<'a> {
+            name: &'a str,
+        }
+
+        impl<'a> stuA<'a> {
+            //带有self的默认返回的生命周期是self的生命周期
+            fn get_name(&self) -> &'a str {
+                self.name
+            }
+        }
+
+        pub fn run() {
+            let name = String::from("Alice");
+            let a = stuA { name: &name };
+            println!("Name: {}", a.get_name());
+        }
+    }
     
-    pub struct Teacher {
-        name: String,
-        age: u8,
-        subject: String,
-    }
+    pub mod lecture_6 {
+        //static生命周期存活于整个程序期间
+        use std::fmt::Display;
 
-    impl SchoolName for Teacher {
-        fn get_school_name(&self) -> String {
-            format!("School of {}", self.subject)
+        fn function<'a, T: Display>(x: &'a str, y: &'a str, ann: T) -> &'a str {
+            println!("{}", ann);
+            if x.len() > y.len() {
+                x
+            } else {
+                y
+            }
+        }
+
+        pub fn run() {
+            let x = String::from("long string is long");
+            let y = String::from("xyz");
+            let ann = String::from("annotation");
+            let result = function(x.as_str(), y.as_str(), ann);
+            println!("The longest string is {}", result);
         }
     }
 
-    impl GetInformation for Student {
-        fn get_name(&self) -> &str {
-            &self.name
-        }
-        fn get_age(&self) -> u8 {
-            self.age
-        }
-    }
-
-    impl GetInformation for Teacher {
-        fn get_name(&self) -> &str {
-            &self.name
-        }
-        fn get_age(&self) -> u8 {
-            self.age
-        }
-    }
-
-    fn print_information<T: GetInformation>(item: T) {
-        println!("Name: {}", item.get_name());
-        println!("Age: {}", item.get_age());
-    } 
-
-    pub fn run() {
-        let student = Student {
-            name: String::from("Alice"),
-            age: 20,
-        };
-        let teacher = Teacher {
-            name: String::from("Bob"),
-            age: 30,
-            subject: String::from("Math"),
-        };
-        println!("Student name: {}", student.get_name());
-        println!("Student age: {}", student.get_age());
-        println!("Teacher name: {}", teacher.get_name());
-        println!("Teacher age: {}", teacher.get_age());
-
-        let s = student.get_school_name();
-        let t = teacher.get_school_name();
-        println!("Student school name: {}", s);
-        println!("Teacher school name: {}", t);
-
-        print_information(student);
-    }
 }
