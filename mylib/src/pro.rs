@@ -223,7 +223,7 @@ pub mod trait_mod {
                 println!("Student age: {}", self.student.get_age());
             }
         }
-        
+
         struct Teacher {
             name: String,
             age: u8,
@@ -307,7 +307,6 @@ pub mod trait_mod {
             s.print_name();
         }
     }
-
 }
 
 pub mod life_time {
@@ -377,7 +376,7 @@ pub mod life_time {
             println!("Name: {}", a.get_name());
         }
     }
-    
+
     pub mod lecture_6 {
         //static生命周期存活于整个程序期间
         use std::fmt::Display;
@@ -397,6 +396,82 @@ pub mod life_time {
             let ann = String::from("annotation");
             let result = function(x.as_str(), y.as_str(), ann);
             println!("The longest string is {}", result);
+        }
+    }
+}
+
+pub mod closure {
+    pub mod lecture_1 {
+        //格式
+        fn add_one(x: u32) -> u32 {
+            println!("{}", x + 1);
+            x + 1
+        }
+        pub fn run() {
+            let add_one1 = |x: u32| -> u32 { x + 1 };
+            let add_one2 = |x| x + 1;
+            let add_one3 = |x| {x + 1};
+
+            let a = add_one(5);
+            let b = add_one1(5);
+            let c = add_one2(5);
+            let d = add_one3(5);
+            println!("a: {}, b: {}, c: {}, d: {}", a, b, c, d);
+
+            let i = 1;
+            let exe = |x| x + i;
+            let r = exe(5);
+            println!("r: {}", r);
+            
+        }
+    }
+
+    pub mod lecture_2 {
+        struct Cacher<T: Fn(u32) -> u32> {
+            calculation: T,
+            value: Option<u32>,
+        }
+
+        impl<T: Fn(u32) -> u32> Cacher<T>
+        {
+            fn new(calculation: T) -> Cacher<T> {
+                Cacher {
+                    calculation,
+                    value:None,
+                }
+            }
+
+            fn value(&mut self, arg: u32) -> u32 {
+                match self.value {
+                    Some(v) => v,
+                    None => {
+                        let v = (self.calculation)(arg);
+                        self.value = Some(v);
+                        v
+                    }
+                }
+            }
+        }
+
+        pub fn run() {
+            let mut c = Cacher::new(|x| x + 1);
+            let v1 = c.value(1);
+            let v2 = c.value(20);
+            println!("v1: {}, v2: {}", v1, v2);
+        }
+    }
+
+    pub mod lecture_3 {
+        pub fn run() {
+            // let x = 4;
+            // let equal_to_x = |z| z == x;
+            // let y = 4;
+            // println!("{}", equal_to_x(y));
+            let x = vec![1, 2, 3];
+            let equal_to_x = move |z| z == x;
+            // println!("can't use x here: {:?}", x);
+            let y = vec![1, 2, 3];
+            println!("{}", equal_to_x(y));
         }
     }
 

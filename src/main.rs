@@ -24,5 +24,5 @@ fn main() {
     // basic::error_mod::run();
 
 
-    pro::life_time::lecture_6::run();
+    pro::closure::lecture_3::run();
 }
