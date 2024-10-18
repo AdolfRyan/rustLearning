@@ -410,7 +410,7 @@ pub mod closure {
         pub fn run() {
             let add_one1 = |x: u32| -> u32 { x + 1 };
             let add_one2 = |x| x + 1;
-            let add_one3 = |x| {x + 1};
+            let add_one3 = |x| x + 1;
 
             let a = add_one(5);
             let b = add_one1(5);
@@ -422,7 +422,6 @@ pub mod closure {
             let exe = |x| x + i;
             let r = exe(5);
             println!("r: {}", r);
-            
         }
     }
 
@@ -432,12 +431,11 @@ pub mod closure {
             value: Option<u32>,
         }
 
-        impl<T: Fn(u32) -> u32> Cacher<T>
-        {
+        impl<T: Fn(u32) -> u32> Cacher<T> {
             fn new(calculation: T) -> Cacher<T> {
                 Cacher {
                     calculation,
-                    value:None,
+                    value: None,
                 }
             }
 
@@ -474,5 +472,99 @@ pub mod closure {
             println!("{}", equal_to_x(y));
         }
     }
+}
 
+// trait Iterator {
+//     type Item;
+//     fn next(mut self) -> Option<Self::Item>;//定义trait的关联类型；
+// }
+//next 是Iterator被要求实现的唯一的一个方法
+
+pub mod iterator {
+    pub mod lecture_1 {
+        use std::iter;
+
+        pub fn run() {
+            let v1 = vec![1, 2, 3];
+            let mut v1_iter = v1.iter();
+            // for val in v1_iter {
+            //     println!("val = {}", val)
+            // }
+            if let Some(v) = v1_iter.next() {
+                println!("val = {}", v)
+            }
+            if let Some(v) = v1_iter.next() {
+                println!("val = {}", v)
+            }
+            if let Some(v) = v1_iter.next() {
+                println!("val = {}", v)
+            }
+            if let Some(v) = v1_iter.next() {
+                println!("val = {}", v)
+            } else {
+                println!("emd!!!!!!")
+            }
+
+            let mut v2 = vec![1, 2, 3];
+            let mut v2_iter = v2.iter_mut();
+            if let Some(v) = v2_iter.next() {
+                *v = 3;
+            }
+            println!("v2 = {:?}", v2);
+
+            //---消费适配器----
+            let v1 = vec![1, 2, 3];
+            let v1_iter = v1.iter();
+            let total: i32 = v1_iter.sum();
+            println!("total is : {}", total);
+
+            //-----迭代适配器-------
+            let v1 = vec![1, 2, 3];
+            let v2: Vec<_> = v1.iter().map(|x| x + 1).collect();
+            println!("v2 is {:?}", v2);
+
+            let v1 = vec![1, 2, 3, 10];
+            let v2: Vec<_> = v1.into_iter().filter(|x| *x > 5).collect();
+            println!("v2 is {:?}", v2);
+        }
+    }
+
+    pub mod lecture_2 {
+        use crate::factory::produce_washing_machine::B::C;
+
+
+        struct Counter {
+            count: u32,
+        }
+
+        impl Counter {
+            fn new() -> Counter {
+                Counter { count: 0 }
+            }
+        }
+
+        impl Iterator for Counter {
+            type Item = u32;
+            fn next(&mut self) -> Option<Self::Item> {
+                self.count += 1;
+                if self.count < 6 {
+                    Some(self.count)
+                } else {
+                    None
+                }
+            }
+        }
+
+        pub fn run() {
+            let mut counter = Counter::new();
+            for i in 0..6 {
+                if let Some(v) = counter.next() {
+                    println!("i = {}, v = {}",i ,v);
+                } else {
+                    println!("i = {} at end", i);
+                    break;
+                }
+            }
+        }
+    }
 }
