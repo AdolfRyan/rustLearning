@@ -24,5 +24,5 @@ fn main() {
     // basic::error_mod::run();
 
 
-    pro::iterator::lecture_2::run();
+    pro::rc_pointer_mod::lecture_2::run();
 }

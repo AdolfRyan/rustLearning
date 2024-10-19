@@ -532,7 +532,6 @@ pub mod iterator {
     pub mod lecture_2 {
         use crate::factory::produce_washing_machine::B::C;
 
-
         struct Counter {
             count: u32,
         }
@@ -559,12 +558,223 @@ pub mod iterator {
             let mut counter = Counter::new();
             for i in 0..6 {
                 if let Some(v) = counter.next() {
-                    println!("i = {}, v = {}",i ,v);
+                    println!("i = {}, v = {}", i, v);
                 } else {
                     println!("i = {} at end", i);
                     break;
                 }
             }
+        }
+    }
+}
+
+pub mod cargo_mod {
+    pub mod lecture_1 {
+        pub fn run() {
+            //cargo build --release
+            //cargo run --release
+
+            // [profile.dev]
+            // opt-level = 0
+            // [profile.release]
+            // opt-level = 3
+            println!("hello world");
+        }
+    }
+
+    pub mod lecture_2 {
+        use crypto::digest::Digest;
+        use crypto::sha3::Sha3;
+        pub fn run() {
+            let mut haser = Sha3::sha3_256();
+            haser.input_str("hello word");
+            let res = haser.result_str();
+            println!("{}", res)
+        }
+    }
+
+    pub mod lecture_3 {
+        pub fn run() {
+            //! My Crate
+            //! 'my_crate' is a collectionr of utilties to make perfecting certain culculations more convenient
+            ///给这个数字加一  代表文档注释
+            /// #Example
+            /// ```
+            /// let five = 5;
+            /// ```
+            pub fn add_one(x: i32) -> i32 {
+                x + 1
+            }
+        }
+    }
+}
+
+pub mod box_mod {
+    //编译时大小位置，需要确切大小的上下文
+    //不被拷贝下转移所有权
+    pub mod lecture_1 {
+        pub fn run() {
+            //b存储在栈上，5存储在堆上
+            let b = Box::new(5);
+            println!("b = {}", b);
+        }
+    }
+
+    pub mod lecture_2 {
+        // enum List {
+        //     Cons(i32, List),
+        //     Nil,
+        // }
+        enum List {
+            Cons(i32, Box<List>),
+            Nil,
+        }
+        pub fn run() {
+            use List::Cons;
+            use List::Nil;
+            // let list = Cons(1, Cons(2, Cons(3, Nil)));
+            let list = Cons(1, Box::new(Cons(2, Box::new(Cons(3, Box::new(Nil))))));
+        }
+    }
+
+    pub mod lecture_3 {
+        pub fn run() {
+            let x = 5;
+            let y = &x;
+            assert_eq!(5, x);
+            assert_eq!(5, *y);
+
+            let z = Box::new(x);
+            assert_eq!(5, *z);
+        }
+    }
+
+    pub mod lecture_4 {
+        use std::ops::Deref;
+        struct MyBox<T>(T);
+        impl<T> MyBox<T> {
+            fn new(x: T) -> MyBox<T> {
+                MyBox(x)
+            }
+        }
+        impl<T> Deref for MyBox<T> {
+            type Target = T;
+            fn deref(&self) -> &T {
+                &self.0
+            }
+        }
+
+        fn hello(name: &str) {
+            println!("hello, {}", name);
+        }
+
+        pub fn run() {
+            // let x = 5;
+            // let y = MyBox::new(x);
+            // assert_eq!(5, x);
+            // assert_eq!(5, *y);
+            let m = MyBox::new(String::from("RRRRRust"));
+            hello(&m);
+        }
+    }
+
+    pub mod lecture_5 {
+        pub fn run() {}
+    }
+}
+
+pub mod drop_mod {
+    //类似析构函数，当值离开作用域的时候执行drop函数
+    pub mod lecture_1 {
+        struct Dog {
+            name: String,
+        }
+
+        impl Drop for Dog {
+            fn drop(&mut self) {
+                println!("{} leave", self.name);
+            }
+        }
+        pub fn run() {
+            let a = Dog {
+                name: String::from("wangcai"),
+            };
+            {
+                let v = Dog {
+                    name: String::from("dahuang"),
+                };
+                println!("-------------------1111111");
+            }
+            println!("-------------0000")
+        }
+    }
+
+    pub mod lecture_2 {
+        struct Dog {
+            name: String,
+        }
+
+        impl Drop for Dog {
+            fn drop(&mut self) {
+                println!("{} leaves", self.name);
+            }
+        }
+
+        pub fn run() {
+            let a = Dog {
+                name: String::from("wangcai"),
+            };
+            let b = Dog {
+                name: String::from("dahuang"),
+            };
+            drop(b);
+        }
+    }
+}
+
+pub mod rc_pointer_mod {
+    pub mod lecture_1 {
+        use std::rc::Rc;
+        // enum List {
+        //     Cons(i32, Box<List>),
+        //     Nil,
+        // }
+        enum List {
+            Cons(i32, Rc<List>),
+            Nil,
+        }
+        pub fn run() {
+            use List::{Cons, Nil};
+            // let a = Cons(5, Box::new(Cons(10, Box::new(Nil))));
+            // let b = Cons(3, Box::new(a));
+            // let c = Cons(4, Box::new(a));
+            let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+            let b = Cons(3, a.clone());
+        }
+    }
+
+    pub mod lecture_2 {
+        use std::rc::Rc;
+
+        enum List {
+            Cons(i32, Rc<List>),
+            Nil,
+        }
+
+        pub fn run() {
+            use List::{Cons, Nil};
+            let a = Rc::new(Cons(10, Rc::new(Cons(5, Rc::new(Nil)))));
+            println!("count agter a a = {}", Rc::strong_count(&a));
+
+            let b = Cons(3, a.clone());
+            println!("count afer b a = {}", Rc::strong_count(&a));
+
+            {
+                let c = Cons(4, a.clone());
+                println!("count after c a = {}", Rc::strong_count(&a));
+            }
+
+            println!("count a = {}", Rc::strong_count(&a));
         }
     }
 }
